@@ -1,0 +1,46 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - heading "小说阅读" [level=1] [ref=e5]
+      - combobox [ref=e6] [cursor=pointer]:
+        - option "选择小说…"
+        - option "星河问道（50章）" [selected]
+    - generic [ref=e7]:
+      - generic [ref=e8]: 星际修仙
+      - generic [ref=e9]: 宇宙分为星域、星系、星界三大层级，星灵气弥漫虚空。修炼体系从练星期至星仙共十境，灵能科技与修真深度融合。七十二星域各有霸主，星宫与仙盟暗中角力。主角林星出身被诅咒的废星，天生‘星痕’体质可吞噬转化一切能量，被视为不祥。星宫表面维护秩序，实则秘密抓捕星痕者，企图激活远古星仙留下的‘星界之门’——打开后虽可永生，却会吞噬现有宇宙。主角从逃亡到反抗，最终揭露真相并选择守护宇宙。
+    - navigation [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12] [cursor=pointer]:
+          - generic [ref=e13]: ▼
+          - generic [ref=e14]: 第1卷 · 废星觉醒
+        - list [ref=e15]:
+          - listitem [ref=e16] [cursor=pointer]: 第1章 星图异变
+          - listitem [ref=e17] [cursor=pointer]: 第2章 暗星迷途
+          - listitem [ref=e18] [cursor=pointer]: 第3章 血路跃迁
+          - listitem [ref=e19] [cursor=pointer]: 第4章 星仙遗诏
+          - listitem [ref=e20] [cursor=pointer]: 第5章 迷雾星碑
+          - listitem [ref=e21] [cursor=pointer]: 第6章 星阁试炼
+          - listitem [ref=e22] [cursor=pointer]: 第7章 混沌突围
+          - listitem [ref=e23] [cursor=pointer]: 第8章 仙遗星域
+          - listitem [ref=e24] [cursor=pointer]: 第9章 星门初启
+          - listitem [ref=e25] [cursor=pointer]: 第10章 绝境星门
+      - generic [ref=e27] [cursor=pointer]:
+        - generic [ref=e28]: ▼
+        - generic [ref=e29]: 第2卷 · 星域风云
+      - generic [ref=e31] [cursor=pointer]:
+        - generic [ref=e32]: ▼
+        - generic [ref=e33]: 第3卷 · 暗星迷途
+      - generic [ref=e35] [cursor=pointer]:
+        - generic [ref=e36]: ▼
+        - generic [ref=e37]: 第4卷 · 联盟与背叛
+      - generic [ref=e39] [cursor=pointer]:
+        - generic [ref=e40]: ▼
+        - generic [ref=e41]: 第5卷 · 终极抉择
+  - main [ref=e42]:
+    - generic [ref=e43]:
+      - generic [ref=e44]: 📖
+      - paragraph [ref=e45]: 从左侧目录选择一章开始阅读
+    - generic [ref=e46]:
+      - button "← 上一章" [ref=e47] [cursor=pointer]
+      - button "下一章 →" [ref=e48] [cursor=pointer]
+  - button "目录" [ref=e49] [cursor=pointer]: ☰

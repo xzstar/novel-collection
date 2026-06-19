@@ -1,0 +1,6 @@
+.DS_Store
+*.jpeg
+*.png
+*.log
+.claude/
+node_modules/
