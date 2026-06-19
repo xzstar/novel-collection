@@ -3,45 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>小说阅读</title>
-  <link rel="stylesheet" href="/style.css">
+  <title>星河问道 - 小说阅读</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="app">
+    <!-- 侧边目录 -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <h1 class="app-title">小说阅读</h1>
         <select id="novelSelect" class="novel-select">
           <option value="">选择小说…</option>
         </select>
       </div>
       <div class="novel-meta" id="novelMeta"></div>
-      <nav class="catalog" id="catalog">
-        <div class="catalog-empty">请选择一部小说</div>
-      </nav>
+      <nav class="catalog" id="catalog"></nav>
     </aside>
 
+    <!-- 遮罩层 -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- 顶部工具栏 -->
+    <header class="toolbar">
+      <div class="toolbar-left">
+        <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+        <span class="chapter-title" id="chapterTitle">正在加载…</span>
+      </div>
+      <div class="toolbar-right">
+        <button class="font-btn" id="fontMinus" title="缩小字号">A−</button>
+        <button class="font-btn" id="fontPlus" title="放大字号">A+</button>
+      </div>
+    </header>
+
+    <!-- 阅读区域 -->
     <main class="reader" id="reader">
-      <div class="reader-empty" id="readerEmpty">
-        <div class="empty-icon">📖</div>
-      </div>
-      <article class="chapter" id="chapter" hidden></article>
-      <div class="reader-nav" id="readerNav" hidden>
-        <button id="prevBtn" class="nav-btn">← 上一章</button>
-        <div class="nav-center">
-          <span id="chapterIndicator" class="nav-indicator"></span>
-          <div class="font-controls">
-            <button class="font-btn" id="fontMinus" title="缩小字号">A−</button>
-            <button class="font-btn" id="fontPlus" title="放大字号">A+</button>
-          </div>
-        </div>
-        <button id="nextBtn" class="nav-btn">下一章 →</button>
-      </div>
+      <article class="chapter-inner" id="chapter"></article>
     </main>
 
-    <button class="menu-toggle" id="menuToggle" aria-label="目录">☰</button>
-    <div class="overlay" id="overlay" hidden></div>
+    <!-- 底部导航 -->
+    <footer class="reader-nav" id="readerNav">
+      <button id="prevBtn" class="nav-btn">← 上一章</button>
+      <span id="chapterIndicator" class="nav-indicator"></span>
+      <button id="nextBtn" class="nav-btn">下一章 →</button>
+    </footer>
   </div>
-  <script src="/app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

@@ -1,32 +1,24 @@
 :root {
   --bg: #f5f4ef;
   --surface: #ffffff;
-  --reader-bg: #fdfcf8;
   --text: #2b2b2b;
   --text-muted: #7a7770;
-  --text-faint: #aaa7a0;
+  --text-faint: #a9a79f;
   --border: #e8e6df;
   --accent: #4a6fa5;
-  --accent-hover: #3a5a8a;
-  --accent-soft: rgba(74, 111, 165, 0.08);
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  --sidebar-width: 300px;
-  --reader-max-width: 720px;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #15161a;
     --surface: #1e1f24;
-    --reader-bg: #1a1b1f;
     --text: #d6d4cf;
     --text-muted: #8a8880;
     --text-faint: #5a5852;
     --border: #2c2d33;
     --accent: #7ba4d8;
-    --accent-hover: #9bbcea;
-    --accent-soft: rgba(123, 164, 216, 0.12);
-    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
   }
 }
 
@@ -39,49 +31,59 @@ html, body {
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 .app {
-  display: flex;
   height: 100vh;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
-/* ---------- Sidebar ---------- */
+/* ---------- 目录侧边栏（默认隐藏） ---------- */
 .sidebar {
-  width: var(--sidebar-width);
-  flex-shrink: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 280px;
   background: var(--surface);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  z-index: 200;
+  transform: translateX(-100%);
+  transition: transform 0.2s ease;
 }
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 150;
+  display: none;
+}
+
+.overlay.show { display: block; }
 
 .sidebar-header {
-  padding: 22px 20px 16px;
+  padding: 20px 18px 14px;
   border-bottom: 1px solid var(--border);
-}
-
-.app-title {
-  font-size: 17px;
-  font-weight: 600;
-  margin-bottom: 14px;
-  letter-spacing: 1px;
-  color: var(--text);
 }
 
 .novel-select {
   width: 100%;
-  padding: 9px 12px;
+  padding: 8px 12px;
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--surface);
   color: var(--text);
   font-size: 14px;
   cursor: pointer;
-  transition: border-color 0.15s;
   appearance: none;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%237a7770' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");
   background-repeat: no-repeat;
@@ -89,14 +91,11 @@ html, body {
   padding-right: 32px;
 }
 
-.novel-select:hover { border-color: var(--text-faint); }
-.novel-select:focus { outline: none; border-color: var(--accent); }
-
 .novel-meta {
-  padding: 14px 20px;
-  font-size: 12px;
+  padding: 12px 18px;
+  font-size: 11px;
   color: var(--text-muted);
-  line-height: 1.7;
+  line-height: 1.6;
   border-bottom: 1px solid var(--border);
   display: none;
 }
@@ -105,46 +104,40 @@ html, body {
 
 .novel-meta .genre-tag {
   display: inline-block;
-  padding: 2px 9px;
-  background: var(--accent-soft);
+  padding: 2px 8px;
+  background: rgba(74, 111, 165, 0.1);
   color: var(--accent);
   border-radius: 10px;
   font-size: 11px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .novel-meta .world-setting {
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  color: var(--text-faint);
 }
 
 .catalog {
   flex: 1;
   overflow-y: auto;
-  padding: 8px 0 20px;
-}
-
-.catalog-empty {
-  padding: 30px 20px;
-  text-align: center;
-  color: var(--text-faint);
-  font-size: 13px;
+  padding: 4px 0;
 }
 
 .volume { margin-bottom: 2px; }
 
 .volume-head {
-  padding: 10px 20px;
-  font-size: 13px;
+  padding: 8px 18px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-muted);
   cursor: pointer;
   user-select: none;
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   transition: color 0.15s;
 }
 
@@ -153,7 +146,7 @@ html, body {
 .volume-head .arrow {
   display: inline-block;
   transition: transform 0.2s ease;
-  font-size: 9px;
+  font-size: 8px;
   color: var(--text-faint);
 }
 
@@ -163,8 +156,8 @@ html, body {
 .chapter-list { list-style: none; }
 
 .chapter-item {
-  padding: 8px 20px 8px 38px;
-  font-size: 13px;
+  padding: 7px 18px 7px 36px;
+  font-size: 12px;
   color: var(--text-muted);
   cursor: pointer;
   border-left: 2px solid transparent;
@@ -182,37 +175,79 @@ html, body {
 .chapter-item.active {
   color: var(--accent);
   border-left-color: var(--accent);
-  background: var(--accent-soft);
+  background: rgba(74, 111, 165, 0.07);
   font-weight: 500;
 }
 
-/* ---------- Reader ---------- */
-.reader {
-  flex: 1;
+/* ---------- 顶部工具栏 ---------- */
+.toolbar {
   display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  position: relative;
-  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
 }
 
-.reader-empty { display: none; }
+.toolbar-left { display: flex; align-items: center; gap: 12px; }
+.toolbar-right { display: flex; align-items: center; gap: 6px; }
 
-.chapter {
+.menu-btn {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s;
+}
+
+.menu-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.chapter-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  max-width: 500px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.font-btn {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 12px;
+  transition: border-color 0.15s;
+}
+
+.font-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ---------- 阅读区域 ---------- */
+.reader {
   flex: 1;
   overflow-y: auto;
-  padding: 48px 24px 32px;
-  background: var(--reader-bg);
+  padding: 40px 20px 60px;
   scroll-behavior: smooth;
 }
 
 .chapter-inner {
-  max-width: var(--reader-max-width);
+  max-width: 700px;
   margin: 0 auto;
 }
 
-.chapter h1 {
-  font-size: 23px;
+.chapter-inner h1 {
+  font-size: 22px;
   font-weight: 600;
   text-align: center;
   margin-bottom: 8px;
@@ -223,34 +258,35 @@ html, body {
 .chapter-locator {
   text-align: center;
   color: var(--text-faint);
-  font-size: 12px;
-  margin-bottom: 30px;
-  padding-bottom: 22px;
+  font-size: 11px;
+  margin-bottom: 36px;
+  padding-bottom: 24px;
   border-bottom: 1px solid var(--border);
   letter-spacing: 0.5px;
 }
 
 .chapter-body {
   font-size: 17px;
-  line-height: 1.95;
+  line-height: 2;
   color: var(--text);
   letter-spacing: 0.3px;
   font-family: "PingFang SC", "Hiragino Sans GB", "Songti SC", "STSong", serif;
 }
 
 .chapter-body p {
-  margin-bottom: 1.1em;
+  margin-bottom: 1.4em;
   text-indent: 2em;
 }
 
+/* ---------- 底部导航 ---------- */
 .reader-nav {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 13px 24px;
+  justify-content: center;
+  gap: 24px;
+  padding: 14px 20px;
   border-top: 1px solid var(--border);
   background: var(--surface);
-  gap: 12px;
 }
 
 .nav-btn {
@@ -258,11 +294,10 @@ html, body {
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--surface);
-  color: var(--text);
+  color: var(--text-muted);
   font-size: 13px;
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;
-  white-space: nowrap;
 }
 
 .nav-btn:hover:not(:disabled) {
@@ -271,109 +306,38 @@ html, body {
 }
 
 .nav-btn:disabled {
-  opacity: 0.35;
+  opacity: 0.3;
   cursor: not-allowed;
-}
-
-.nav-center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
 }
 
 .nav-indicator {
   font-size: 12px;
   color: var(--text-faint);
   letter-spacing: 0.5px;
+  min-width: 100px;
+  text-align: center;
 }
 
-.font-controls {
-  display: flex;
-  gap: 6px;
-}
-
-.font-btn {
-  width: 28px;
-  height: 24px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--surface);
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 11px;
-  transition: border-color 0.15s, color 0.15s;
-}
-
-.font-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-/* ---------- Mobile ---------- */
-.menu-toggle {
-  display: none;
-  position: fixed;
-  top: 14px;
-  right: 14px;
-  z-index: 100;
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 17px;
-  cursor: pointer;
-  box-shadow: var(--shadow);
-}
-
-.overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  z-index: 40;
-}
-
-.overlay.show { display: block; }
-
-@media (max-width: 768px) {
-  .menu-toggle { display: block; }
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    z-index: 50;
-    transform: translateX(-100%);
-    transition: transform 0.25s ease;
-    box-shadow: 2px 0 16px rgba(0, 0, 0, 0.15);
-    width: 85%;
-    max-width: 320px;
-  }
-  .sidebar.open { transform: translateX(0); }
-  .chapter { padding: 64px 18px 28px; }
-  .chapter-body { font-size: 16px; line-height: 1.9; }
-  .chapter h1 { font-size: 20px; }
-  .reader-nav { padding: 11px 14px; }
-  .nav-btn { padding: 7px 12px; font-size: 12px; }
-  .nav-indicator { font-size: 11px; }
-}
-
-@media (max-width: 420px) {
-  .nav-btn { padding: 7px 10px; font-size: 12px; }
-  .font-controls { display: none; }
-}
-
-/* Scrollbar */
+/* ---------- 滚动条 ---------- */
 .catalog::-webkit-scrollbar,
-.chapter::-webkit-scrollbar { width: 6px; }
+.reader::-webkit-scrollbar { width: 5px; }
 .catalog::-webkit-scrollbar-thumb,
-.chapter::-webkit-scrollbar-thumb {
+.reader::-webkit-scrollbar-thumb {
   background: var(--text-faint);
   border-radius: 3px;
-  opacity: 0.4;
+  opacity: 0.3;
 }
 .catalog::-webkit-scrollbar-track,
-.chapter::-webkit-scrollbar-track { background: transparent; }
+.reader::-webkit-scrollbar-track { background: transparent; }
+
+/* ---------- 移动端 ---------- */
+@media (max-width: 640px) {
+  .toolbar { padding: 10px 14px; }
+  .chapter-title { font-size: 13px; max-width: 180px; }
+  .reader { padding: 30px 16px 50px; }
+  .chapter-inner h1 { font-size: 19px; }
+  .chapter-body { font-size: 16px; line-height: 1.95; }
+  .reader-nav { padding: 12px 14px; gap: 16px; }
+  .nav-btn { padding: 7px 14px; font-size: 12px; }
+  .nav-indicator { font-size: 11px; min-width: 80px; }
+}

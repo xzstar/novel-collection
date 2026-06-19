@@ -11,12 +11,12 @@ const el = {
   novelMeta: document.getElementById("novelMeta"),
   catalog: document.getElementById("catalog"),
   chapter: document.getElementById("chapter"),
-  readerEmpty: document.getElementById("readerEmpty"),
   readerNav: document.getElementById("readerNav"),
   prevBtn: document.getElementById("prevBtn"),
   nextBtn: document.getElementById("nextBtn"),
   chapterIndicator: document.getElementById("chapterIndicator"),
-  menuToggle: document.getElementById("menuToggle"),
+  chapterTitle: document.getElementById("chapterTitle"),
+  menuBtn: document.getElementById("menuBtn"),
   sidebar: document.getElementById("sidebar"),
   overlay: document.getElementById("overlay"),
   fontMinus: document.getElementById("fontMinus"),
@@ -44,7 +44,7 @@ async function init() {
   el.nextBtn.addEventListener("click", goNext);
   el.fontMinus.addEventListener("click", () => adjustFont(-1));
   el.fontPlus.addEventListener("click", () => adjustFont(1));
-  el.menuToggle.addEventListener("click", toggleSidebar);
+  el.menuBtn.addEventListener("click", toggleSidebar);
   el.overlay.addEventListener("click", closeSidebar);
 
   document.addEventListener("keydown", (e) => {
@@ -122,7 +122,7 @@ function openChapter(vol, ch) {
 
   const volObj = state.current.volumes.find((v) => v.index === vol);
   const chObj = volObj.chapters.find((c) => c.index === ch);
-  renderChapter(chObj.content, vol, ch);
+  renderChapter(chObj.content, vol, ch, chObj.title);
 
   document.querySelectorAll(".chapter-item").forEach((it) =>
     it.classList.remove("active")
@@ -138,35 +138,26 @@ function openChapter(vol, ch) {
   }
 
   updateNav();
-  if (window.innerWidth <= 768) closeSidebar();
+  closeSidebar();
 }
 
-function renderChapter(content, vol, ch) {
+function renderChapter(content, vol, ch, title) {
   const lines = content.split("\n");
-  let h1 = "";
-  let locator = "";
   const bodyLines = [];
   for (const line of lines) {
     const t = line.trim();
-    if (t.startsWith("# ") && !h1) {
-      h1 = t.slice(2).trim();
-    } else if (/^第\d+卷\s*第\d+章/.test(t) && !locator) {
-      locator = t;
-    } else if (t) {
+    if (t && !t.startsWith("# ") && !/^第\d+卷\s*第\d+章/.test(t)) {
       bodyLines.push(t);
     }
   }
   el.chapter.innerHTML = `
-    <div class="chapter-inner">
-      <h1>${escapeHtml(h1 || `第${ch}章`)}</h1>
-      <div class="chapter-locator">${escapeHtml(locator || `第${vol}卷 第${ch}章`)}</div>
-      <div class="chapter-body">${bodyLines.map((p) => `<p>${escapeHtml(p)}</p>`).join("")}</div>
-    </div>
+    <h1>${escapeHtml(title || `第${ch}章`)}</h1>
+    <div class="chapter-locator">第${vol}卷 第${ch}章</div>
+    <div class="chapter-body">${bodyLines.map((p) => `<p>${escapeHtml(p)}</p>`).join("")}</div>
   `;
+  el.chapterTitle.textContent = title || `第${ch}章`;
   applyFontSize();
-  el.chapter.hidden = false;
-  el.readerNav.hidden = false;
-  el.chapter.scrollTop = 0;
+  document.getElementById("reader").scrollTop = 0;
 }
 
 function escapeHtml(s) {
@@ -237,13 +228,11 @@ function goNext() {
 function toggleSidebar() {
   const open = el.sidebar.classList.toggle("open");
   el.overlay.classList.toggle("show", open);
-  el.overlay.hidden = !open;
 }
 
 function closeSidebar() {
   el.sidebar.classList.remove("open");
   el.overlay.classList.remove("show");
-  el.overlay.hidden = true;
 }
 
 init();

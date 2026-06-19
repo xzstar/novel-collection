@@ -13,7 +13,7 @@ CHAPTER_RE = re.compile(r"^第(\d+)章[_．.\-]?(.*)\.md$")
 def main():
     novels = []
     for entry in sorted(ROOT.iterdir()):
-        if not entry.is_dir() or entry.name.startswith(".") or entry.name == "static":
+        if not entry.is_dir() or entry.name.startswith(".") or entry.name in ("static", "docs"):
             continue
 
         outline = {}
