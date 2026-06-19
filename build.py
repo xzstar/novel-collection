@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-STATIC = ROOT / "static"
+STATIC = ROOT / "docs"
 VOLUME_RE = re.compile(r"^第(\d+)卷$")
 CHAPTER_RE = re.compile(r"^第(\d+)章[_．.\-]?(.*)\.md$")
 

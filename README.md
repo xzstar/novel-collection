@@ -10,7 +10,7 @@
 
 ```bash
 # 用任何静态文件服务器
-python3 -m http.server 8000 --directory static
+python3 -m http.server 8000 --directory docs
 open http://localhost:8000
 ```
 
