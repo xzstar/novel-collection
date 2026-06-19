@@ -27,7 +27,15 @@ async function init() {
   const savedSize = localStorage.getItem("fontSize");
   if (savedSize) state.fontSize = parseInt(savedSize, 10);
 
-  await loadNovels();
+  const res = await fetch("data.json");
+  state.novels = await res.json();
+
+  for (const n of state.novels) {
+    const opt = document.createElement("option");
+    opt.value = n.name;
+    opt.textContent = n.title;
+    el.novelSelect.appendChild(opt);
+  }
 
   el.novelSelect.addEventListener("change", (e) => {
     if (e.target.value) selectNovel(e.target.value);
@@ -44,44 +52,22 @@ async function init() {
     if (e.key === "ArrowLeft") goPrev();
     else if (e.key === "ArrowRight") goNext();
   });
-}
 
-async function loadNovels() {
-  try {
-    const res = await fetch("/api/novels");
-    state.novels = await res.json();
-  } catch (e) {
-    el.catalog.innerHTML = '<div class="catalog-empty">加载失败</div>';
-    return;
-  }
-  for (const n of state.novels) {
-    const opt = document.createElement("option");
-    opt.value = n.name;
-    opt.textContent = n.chapters ? `${n.title}（${n.chapters}章）` : n.title;
-    el.novelSelect.appendChild(opt);
-  }
-  if (state.novels.length === 1) {
+  if (state.novels.length >= 1) {
     el.novelSelect.value = state.novels[0].name;
-    await selectNovel(state.novels[0].name);
+    selectNovel(state.novels[0].name);
     if (state.current.volumes[0].chapters[0]) {
-      await openChapter(state.current.volumes[0].index, state.current.volumes[0].chapters[0].index);
+      openChapter(state.current.volumes[0].index, state.current.volumes[0].chapters[0].index);
     }
   }
 }
 
-async function selectNovel(name) {
-  const res = await fetch(`/api/novels/${encodeURIComponent(name)}`);
-  const data = await res.json();
-  if (data.error) {
-    el.catalog.innerHTML = `<div class="catalog-empty">${data.error}</div>`;
-    return;
-  }
-  state.current = data;
+function selectNovel(name) {
+  state.current = state.novels.find((n) => n.name === name);
   state.currentVol = null;
   state.currentCh = null;
-  renderMeta(data);
-  renderCatalog(data);
-  showEmpty();
+  renderMeta(state.current);
+  renderCatalog(state.current);
 }
 
 function renderMeta(data) {
@@ -92,10 +78,10 @@ function renderMeta(data) {
     tag.textContent = data.genre;
     el.novelMeta.appendChild(tag);
   }
-  if (data.world_setting) {
+  if (data.worldSetting) {
     const p = document.createElement("div");
     p.className = "world-setting";
-    p.textContent = data.world_setting;
+    p.textContent = data.worldSetting;
     el.novelMeta.appendChild(p);
   }
   el.novelMeta.classList.add("has-meta");
@@ -103,10 +89,9 @@ function renderMeta(data) {
 
 function renderCatalog(data) {
   el.catalog.innerHTML = "";
-  data.volumes.forEach((vol, vIdx) => {
+  data.volumes.forEach((vol) => {
     const vdiv = document.createElement("div");
-    vdiv.className = "volume";
-    if (vIdx !== 0) vdiv.classList.add("collapsed");
+    vdiv.className = "volume collapsed";
 
     const head = document.createElement("div");
     head.className = "volume-head";
@@ -131,17 +116,13 @@ function renderCatalog(data) {
   });
 }
 
-async function openChapter(vol, ch) {
+function openChapter(vol, ch) {
   state.currentVol = vol;
   state.currentCh = ch;
-  const name = state.current.name;
-  const res = await fetch(
-    `/api/novels/${encodeURIComponent(name)}/chapter?v=${vol}&c=${ch}`
-  );
-  const data = await res.json();
-  if (data.error) return;
 
-  renderChapter(data, vol, ch);
+  const volObj = state.current.volumes.find((v) => v.index === vol);
+  const chObj = volObj.chapters.find((c) => c.index === ch);
+  renderChapter(chObj.content, vol, ch);
 
   document.querySelectorAll(".chapter-item").forEach((it) =>
     it.classList.remove("active")
@@ -160,8 +141,8 @@ async function openChapter(vol, ch) {
   if (window.innerWidth <= 768) closeSidebar();
 }
 
-function renderChapter(data, vol, ch) {
-  const lines = (data.content || "").split("\n");
+function renderChapter(content, vol, ch) {
+  const lines = content.split("\n");
   let h1 = "";
   let locator = "";
   const bodyLines = [];
@@ -184,7 +165,6 @@ function renderChapter(data, vol, ch) {
   `;
   applyFontSize();
   el.chapter.hidden = false;
-  el.readerEmpty.hidden = true;
   el.readerNav.hidden = false;
   el.chapter.scrollTop = 0;
 }
@@ -252,12 +232,6 @@ function goNext() {
     const next = findAdjacentVol(1);
     if (next) openChapter(next.index, next.chapters[0].index);
   }
-}
-
-function showEmpty() {
-  el.chapter.hidden = true;
-  el.readerNav.hidden = true;
-  el.readerEmpty.hidden = false;
 }
 
 function toggleSidebar() {

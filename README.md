@@ -1,24 +1,33 @@
 # 小说阅读站
 
-清爽的小说阅读器，自动扫描目录中的小说文件。
-
-## 本地运行
-
-```bash
-python3 app.py
-open http://localhost:8000
-```
+清爽的纯静态小说阅读器，直接在 GitHub Pages 上运行。
 
 ## 在线访问
 
-部署在 GitHub Pages 上：**https://xzstar.github.io/novel-collection/**
+**https://xzstar.github.io/novel-collection/**
+
+## 本地预览
+
+```bash
+# 用任何静态文件服务器
+python3 -m http.server 8000 --directory static
+open http://localhost:8000
+```
+
+## 编译
+
+添加新小说后，重新编译静态数据：
+
+```bash
+python3 build.py
+```
 
 ## 功能
 
 - 📖 目录树：按卷/章节组织，可折叠
 - 🎨 自动深色/浅色模式（跟随系统）
 - 📱 响应式设计，移动端适配
-- ⚡ 字号调整并记忆
+- ⚡ 字号调整并记忆（localStorage）
 - ⌨️ 方向键导航（← →）
 - 🌍 支持多本小说切换
 
